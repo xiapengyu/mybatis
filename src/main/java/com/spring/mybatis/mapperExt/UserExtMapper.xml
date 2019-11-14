@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.mybatis.mapperExt.UserExtMapper">
+    <resultMap id="BaseResultMap" type="com.spring.mybatis.entity.User">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="enabled" jdbcType="BIGINT" property="enabled" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="last_password_reset_time" jdbcType="TIMESTAMP" property="lastPasswordResetTime" />
+        <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="job_id" jdbcType="BIGINT" property="jobId" />
+    </resultMap>
+
+    <select id="queryUserByCondition" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from user where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <!--查询总记录数-->
+    <select id="selectTotalCount" resultType="java.lang.Integer">
+        SELECT count(*) FROM user
+        <include refid="query_page_condition"/>
+    </select>
+
+    <!--查询分页数据-->
+    <select id="queryUserInfoByPage" resultMap="BaseResultMap">
+        SELECT * FROM user
+        <include refid="query_page_condition"/>
+    </select>
+
+    <sql id="query_page_condition">
+        <where>
+            1=1
+            <if test="param.username != null and param.username != ''">
+                <![CDATA[ and username like concat('%',#{param.username},'%')]]>
+            </if>
+            <if test="param.phone != null and param.phone != ''">
+                <![CDATA[ and phone like concat('%',#{param.phone},'%')]]>
+            </if>
+        </where>
+        <if test="page !=null and page.pageSize !=null and page.offerset !=null">
+            ORDER BY create_time desc
+            limit #{page.pageSize} offset #{page.offerset}
+        </if>
+    </sql>
+</mapper>
